@@ -44,6 +44,7 @@ def run(model):
 
 def main():
     parsed = ArgsParser().getParser()
+    check_args(parsed)
     if not Path(parsed.F_path).is_file():
         raise FileNotFoundError(f"Can't open (Forces) {parsed.F_path} file.")
     if not Path(parsed.W_path).is_file():
