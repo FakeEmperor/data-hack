@@ -23,6 +23,13 @@ def get_model(parsed):
 def get_tables(parsed):
     return pd.read_csv(parsed.W_path), pd.read_csv(parsed.F_path)
 
+def check_args(parser):
+    if(parser.V0 > 250):
+        raise ValueError("Velocity can't be bigger that 250")
+    if(parser.H0 > 1400):
+        raise ValueError("High of drop can't be bigger than 1400")
+    if(parser.m <= 0):
+        raise ValueError("Mass of object must be bigger than 0")
 
 def run(model):
     pos = np.hstack((model.v0, model.pos0))
