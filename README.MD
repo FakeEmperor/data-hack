@@ -86,7 +86,61 @@ s'(t) = V_s(t), где s = x,y  или z
 
 
 ## Подготовка к запуску решения
+Для запуска решения необходимо подготовить окружение для выполнения кода.
+
+Требования:
+
+- Интерпретатор языка: `Python 3.7`
+- Установленные пакеты из списка в `requirements.txt`.
+  Пример установки ниже: 
+  
+  ```bash
+  python -m virtualenv .venv
+  .venv/Scripts/activate.bat
+  pip install -r requirements.txt
+  ```
 
 ## Запуск решения
 
+Выполнить следующую команду:
+
+```bash
+python main.py <X> <Y> <Z> -H <высота> -V <скорость>
+```
+
+Подробнее про использование:
+
+```
+usage: main.py [-h] [-H H0] [-V V0] [-F F_PATH] [-W W_PATH] [-a ALPHA] [-m M]
+               [-v V]
+               X Y Z
+
+positional arguments:
+  X           X destanation coordinate
+  Y           Y destanation coordinate
+  Z           Z destanation coordinate
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -H H0       High of drop
+  -V V0       Started velocity of drop
+  -F F_PATH   path to .csv file data with F info
+  -W W_PATH   path to .csv file with winds info
+  -a ALPHA    angle of drop in radians
+  -m M        mass of object
+  -v V        verbosity level
+
+```
+
 ### Пример запуска решения на данных для отладки
+
+```bash
+> python main.py 0 0 0 -V 250 -H 1000
+
+[01:22:30] [INFO]: Trying to detect which type of wind model is needed (calculate deltas in a dataset)...
+[01:22:30] [INFO]: Wind dataset will be predicted using dynamic step variation: False
+Started solving...
+Result position: [-962.21167039 1000.           48.69375408], took: 0:00:00.391501
+Verifying accuracy...
+Average error: 3.34m
+```
