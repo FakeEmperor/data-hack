@@ -48,7 +48,7 @@ def main():
     result = model.solve(destination)
     print(f"Result position: {result}, took: {datetime.now() - started}")
     print("Verifying accuracy...")
-    print(f"Score is: {model.score(result, destination, dt=0.001)}")
+    print(f"Average error: {model.score(result, destination, dt=0.005)[1]:.2f}m")
 
 
 if __name__ == "__main__":
