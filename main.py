@@ -1,29 +1,28 @@
-from model import WindyModel, WindPredictor
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
+import logging
+
 import numpy as np
 import pandas as pd
-from argsparser import ArgsParser
+
+from datetime import datetime
 from pathlib import Path
 
-def getLrCoef(F_table):
-    # TRAIN LINEAR REGRESSION TO FIND AERODYNAMIC COEFFICIENT
-    F_table["V^2"] = F_table['V'] ** 2
-    train, test = train_test_split(F_table, test_size=0.1)
-    lr = LinearRegression(normalize=False)
-    lr.fit(train["V^2"].values.reshape(-1, 1), train["Fa"])
-    return lr.coef_[0]
+from dno.argsparser import ArgsParser
+from dno.model import WindyModel
+from dno.environment import WindPredictor, EnvironmentModel, AerodynamicCoefficientPredictor
 
-def getModel(parser):
-    Wind_table, F_table = getWindFTables(parser)
-    winds = WindPredictor(Wind_table, F_table)
-    pos = np.array([parser.X, parser.H0, parser.Y])
-    return WindyModel(winds=winds, pos0=pos, v0=parser.V0, alpha=parser.alpha, mass=parser.m, aerodynamic_coef=getLrCoef(F_table))
 
-def getWindFTables(parser):
-    F_table = pd.read_csv(parser.W_path)
-    Wind_table = pd.read_csv(parser.F_path)
-    return F_table, Wind_table
+def get_model(parsed):
+    wind_table, f_table = get_tables(parsed)
+    aero = AerodynamicCoefficientPredictor(f_table)
+    winds = WindPredictor(wind_table)
+    env = EnvironmentModel(aero, winds)
+    pos = np.array([0, parsed.H0, 0])
+    return WindyModel(pos0=pos, v0=parsed.V0, alpha=parsed.alpha, mass=parsed.m, env=env, verbose=parsed.v)
+
+
+def get_tables(parsed):
+    return pd.read_csv(parsed.W_path), pd.read_csv(parsed.F_path)
+
 
 def run(model):
     pos = np.hstack((model.v0, model.pos0))
@@ -35,18 +34,27 @@ def run(model):
         t_start += 1
     return model.offset_for_target((0, 0, 0), pos[3:])
 
+
 def main():
-    parser = ArgsParser().getParser()
-    if not Path(parser.F_path).is_file():
-        print("Can't open " + parser.F_path + " file.")
-        return
-    if not Path(parser.W_path).is_file():
-        print("Can't open " + parser.W_path + " file.")
-        return
-    model = getModel(parser)
-    result = run(model)
-    print(result)
-    return
+    parsed = ArgsParser().getParser()
+    if not Path(parsed.F_path).is_file():
+        raise FileNotFoundError(f"Can't open (Forces) {parsed.F_path} file.")
+    if not Path(parsed.W_path).is_file():
+        raise FileNotFoundError(f"Can't open (Winds) " + parsed.W_path + " file.")
+    model = get_model(parsed)
+    print("Started solving...")
+    started = datetime.now()
+    destination = np.array((parsed.X, parsed.Y, parsed.Z))
+    result = model.solve(destination)
+    print(f"Result position: {result}, took: {datetime.now() - started}")
+    print("Verifying accuracy...")
+    print(f"Score is: {model.score(result, destination, dt=0.001)}")
+
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        format='[%(asctime)s] [%(levelname)s]: %(message)s',
+        level=logging.DEBUG,
+        datefmt='%I:%M:%S'
+    )
     main()
