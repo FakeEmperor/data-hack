@@ -6,6 +6,7 @@ Ca = 0.27340445  # coef before V**2 in Fa
 g = 9.81
 g_vector = np.array([0, -g, 0])
 
+
 class WindPredictor:
 
     def __init__(self, winds, step=100):
