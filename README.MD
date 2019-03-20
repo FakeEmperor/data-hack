@@ -118,24 +118,29 @@ python main.py <X> <Y> <Z> -H <высота> -V <скорость>
 Подробнее про использование:
 
 ```
-usage: main.py [-h] [-H H0] [-V V0] [-F F_PATH] [-W W_PATH] [-a ALPHA] [-m M]
-               [-v V]
+usage: main.py [-h] [-H H0] [-V V0] [-F F_PATH] [-W W_PATH]
+               [-a VELOCITY ANGLE,*] [-m M] [-v V]
                X Y Z
 
+This solver can solve numerically, using differential equations,a high
+altitude precision drop. It takes into account mass, different winds, initial
+object's velocity and aerodynamic forces to provide accurate results.Results
+are validated using high precision simulation.
+
 positional arguments:
-  X           X destanation coordinate
-  Y           Y destanation coordinate
-  Z           Z destanation coordinate
+  X                    X destination coordinate
+  Y                    Y destination coordinate
+  Z                    Z destination coordinate
 
 optional arguments:
-  -h, --help  show this help message and exit
-  -H H0       High of drop
-  -V V0       Started velocity of drop
-  -F F_PATH   path to .csv file data with F info
-  -W W_PATH   path to .csv file with winds info
-  -a ALPHA    angle of drop in radians
-  -m M        mass of object
-  -v V        verbosity level
+  -h, --help           show this help message and exit
+  -H H0                Drop altitude, m
+  -V V0                Initial velocity in XZ space, m/s
+  -F F_PATH            Path to a CSV file data with F info
+  -W W_PATH            path to a CSV file with winds info
+  -a VELOCITY ANGLE,*  angle of drop in radians
+  -m M                 Object's mass, kg
+  -v V                 Verbosity level for model simulations
 
 ```
 
