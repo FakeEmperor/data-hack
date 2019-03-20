@@ -47,8 +47,8 @@ def main():
     destination = np.array((parsed.X, parsed.Y, parsed.Z))
     result = model.solve(destination)
     print(f"Result position: {result}, took: {datetime.now() - started}")
-    print("Verifying accuracy...")
-    print(f"Average error: {model.score(result, destination, dt=0.005)[1]:.2f}m")
+    print("Verifying accuracy... (it can take a minute or so, depending on your hardware)")
+    print(f"Average error: {model.score(result, destination, dt=0.001)[1]:.2f}m")
 
 
 if __name__ == "__main__":
