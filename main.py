@@ -17,7 +17,7 @@ def getLrCoef(F_table):
 def getModel(parser):
     Wind_table, F_table = getWindFTables(parser)
     winds = WindPredictor(Wind_table, F_table)
-    pos = np.array([parser.X, parser.H0, parser.Y])
+    pos = np.array([parser.X, parser.H0, parser.Z])
     return WindyModel(winds=winds, pos0=pos, v0=parser.V0, alpha=parser.alpha, mass=parser.m, aerodynamic_coef=getLrCoef(F_table))
 
 def getWindFTables(parser):
