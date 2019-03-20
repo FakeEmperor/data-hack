@@ -1,3 +1,4 @@
+scipy
 numpy
 pandas
 ipykernel==5.1.0
